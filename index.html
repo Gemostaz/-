@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кристальный матч | Яндекс.Игры</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            width: 100%;
+            max-width: 1200px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .left-panel {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px;
+        }
+        
+        .right-panel {
+            flex: 2;
+            min-width: 500px;
+            max-width: 700px;
+        }
+        
+        .game-stats {
+            background: rgba(20, 20, 40, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 25px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            transition: transform 0.3s;
+        }
+        
+        .stat:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #6ee7b7;
+            text-shadow: 0 0 15px rgba(110, 231, 183, 0.7);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: #a0a0c0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .boosters-info {
+            background: rgba(20, 20, 40, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .boosters-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #ffcc00;
+            text-align: center;
+        }
+        
+        .booster-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        
+        .booster-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .booster-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .booster-rocket .booster-icon {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+        }
+        
+        .booster-bomb .booster-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .booster-lightning .booster-icon {
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+        }
+        
+        .booster-text {
+            flex-grow: 1;
+        }
+        
+        .booster-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        
+        .booster-desc {
+            font-size: 0.9rem;
+            color: #b0b0e0;
+        }
+        
+        .booster-count {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffcc00;
+            margin-left: 10px;
+        }
+        
+        .game-board-container {
+            position: relative;
+            background: rgba(20, 20, 40, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 25px;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 8px;
+            width: 560px;
+            height: 560px;
+            background: rgba(10, 10, 30, 0.9);
+            border-radius: 15px;
+            padding: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tile {
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tile:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            filter: brightness(1.2);
+        }
+        
+        .tile.selected {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(255, 255, 100, 0.8);
+            z-index: 10;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 15px rgba(255, 255, 100, 0.6); }
+            50% { box-shadow: 0 0 30px rgba(255, 255, 100, 0.9); }
+            100% { box-shadow: 0 0 15px rgba(255, 255, 100, 0.6); }
+        }
+        
+        .tile .inner {
+            width: 85%;
+            height: 85%;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tile .inner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0) 50%,
+                rgba(255, 255, 255, 0.1) 100%
+            );
+            transform: rotate(45deg);
+        }
+        
+        /* Цвета кристаллов (6 типов, включая голубой) */
+        .tile-1 .inner { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); } /* Красный */
+        .tile-2 .inner { background: linear-gradient(135deg, #4ecdc4, #6ae2d9); } /* Голубой - ИСПРАВЛЕН */
+        .tile-3 .inner { background: linear-gradient(135deg, #ffe66d, #ffef9f); } /* Желтый */
+        .tile-4 .inner { background: linear-gradient(135deg, #9d65c9, #b684e0); } /* Фиолетовый */
+        .tile-5 .inner { background: linear-gradient(135deg, #6aecd8, #8ef7e5); } /* Бирюзовый */
+        .tile-6 .inner { background: linear-gradient(135deg, #ff9a76, #ffb59a); } /* Оранжевый */
+        
+        /* Усилители */
+        .tile-rocket-h .inner { 
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            animation: rocketGlow 2s infinite;
+        }
+        
+        .tile-rocket-v .inner { 
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            animation: rocketGlow 2s infinite;
+        }
+        
+        .tile-bomb .inner { 
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            animation: bombPulse 3s infinite;
+        }
+        
+        .tile-hyper-bomb .inner { 
+            background: linear-gradient(135deg, #8a2387, #f27121, #e94057);
+            animation: hyperBombPulse 2s infinite;
+        }
+        
+        .tile-lightning .inner { 
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            animation: lightningSpark 1.5s infinite;
+        }
+        
+        @keyframes rocketGlow {
+            0% { box-shadow: 0 0 10px rgba(255, 65, 108, 0.7); }
+            50% { box-shadow: 0 0 25px rgba(255, 65, 108, 1); }
+            100% { box-shadow: 0 0 10px rgba(255, 65, 108, 0.7); }
+        }
+        
+        @keyframes bombPulse {
+            0% { transform: scale(1); box-shadow: 0 0 15px rgba(102, 126, 234, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(102, 126, 234, 1); }
+            100% { transform: scale(1); box-shadow: 0 0 15px rgba(102, 126, 234, 0.7); }
+        }
+        
+        @keyframes hyperBombPulse {
+            0% { transform: scale(1); box-shadow: 0 0 15px rgba(138, 35, 135, 0.7); }
+            50% { transform: scale(1.1); box-shadow: 0 0 35px rgba(138, 35, 135, 1); }
+            100% { transform: scale(1); box-shadow: 0 0 15px rgba(138, 35, 135, 0.7); }
+        }
+        
+        @keyframes lightningSpark {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(1.5); }
+            100% { filter: brightness(1); }
+        }
+        
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 18px 35px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            min-width: 180px;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        
+        .btn-booster {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .combo-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: bold;
+            color: #ffd166;
+            text-shadow: 0 0 30px rgba(255, 209, 102, 0.9);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+            transition: opacity 0.5s;
+        }
+        
+        .combo-display.active {
+            animation: popCombo 1.2s forwards;
+        }
+        
+        @keyframes popCombo {
+            0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+            30% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+            70% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+        }
+        
+        /* ЭФФЕКТЫ УСИЛИТЕЛЕЙ */
+        .special-effect {
+            position: absolute;
+            pointer-events: none;
+            z-index: 50;
+        }
+        
+        .rocket-effect {
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, transparent, #ff416c, transparent);
+            animation: rocketFly 0.8s forwards;
+        }
+        
+        @keyframes rocketFly {
+            0% { transform: scaleX(0.1); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: scaleX(1); opacity: 0; }
+        }
+        
+        .bomb-effect {
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0));
+            animation: bombExplode 0.6s forwards;
+        }
+        
+        @keyframes bombExplode {
+            0% { width: 0; height: 0; opacity: 1; }
+            100% { width: 200px; height: 200px; opacity: 0; }
+        }
+        
+        .hyper-bomb-effect {
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(138, 35, 135, 0.8), rgba(242, 113, 33, 0.6), rgba(233, 64, 87, 0));
+            animation: hyperBombExplode 0.8s forwards;
+        }
+        
+        @keyframes hyperBombExplode {
+            0% { width: 0; height: 0; opacity: 1; }
+            100% { width: 300px; height: 300px; opacity: 0; }
+        }
+        
+        /* АНИМАЦИИ РАЗРУШЕНИЯ КРИСТАЛЛОВ */
+        .tile-destroy {
+            animation: destroyCrystal 0.7s forwards;
+        }
+        
+        @keyframes destroyCrystal {
+            0% { 
+                transform: scale(1) rotate(0deg); 
+                opacity: 1; 
+                filter: brightness(1) blur(0px);
+            }
+            20% { 
+                transform: scale(1.3) rotate(180deg); 
+                filter: brightness(2) blur(2px);
+            }
+            50% { 
+                transform: scale(1.1) rotate(360deg); 
+                opacity: 0.8;
+                filter: brightness(3) blur(3px);
+            }
+            80% { 
+                transform: scale(0.3) rotate(540deg); 
+                opacity: 0.3;
+                filter: brightness(5) blur(5px);
+            }
+            100% { 
+                transform: scale(0) rotate(720deg); 
+                opacity: 0; 
+                filter: brightness(10) blur(10px);
+            }
+        }
+        
+        .tile-shard {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 60;
+            animation: shardFly 1s forwards;
+        }
+        
+        @keyframes shardFly {
+            0% { 
+                transform: translate(0, 0) rotate(0deg); 
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(var(--tx), var(--ty)) rotate(360deg); 
+                opacity: 0;
+            }
+        }
+        
+        .tile-explode {
+            position: relative;
+            overflow: visible !important;
+        }
+        
+        .tile-explode::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent 70%);
+            animation: explodeRing 0.5s forwards;
+        }
+        
+        @keyframes explodeRing {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+        
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 40;
+            animation: particleFloat 1.5s forwards;
+        }
+        
+        @keyframes particleFloat {
+            0% { 
+                transform: translate(0, 0) scale(1); 
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(var(--px), var(--py)) scale(0); 
+                opacity: 0;
+            }
+        }
+        
+        .tile-fall {
+            animation: fallDown 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes fallDown {
+            from { 
+                transform: translateY(-100px); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0); 
+                opacity: 1; 
+            }
+        }
+        
+        .tile-appear {
+            animation: appearCrystal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes appearCrystal {
+            0% { 
+                transform: scale(0) rotate(-180deg); 
+                opacity: 0; 
+            }
+            70% { 
+                transform: scale(1.1) rotate(10deg); 
+            }
+            100% { 
+                transform: scale(1) rotate(0deg); 
+                opacity: 1; 
+            }
+        }
+        
+        .instructions {
+            max-width: 1000px;
+            background: rgba(20, 20, 40, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .instructions h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #6ee7b7;
+            text-align: center;
+        }
+        
+        .instructions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .instruction-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .instruction-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .instruction-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #ffcc00;
+        }
+        
+        .instruction-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #86a8e7;
+        }
+        
+        .instruction-card p {
+            line-height: 1.5;
+            color: #c0c0e0;
+            font-size: 0.95rem;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #8080a0;
+            font-size: 0.9rem;
+            padding: 20px;
+            width: 100%;
+        }
+        
+        .game-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            border: 2px solid #6ee7b7;
+            box-shadow: 0 0 50px rgba(110, 231, 183, 0.5);
+            min-width: 300px;
+        }
+        
+        .game-message.active {
+            display: block;
+            animation: messageAppear 0.5s forwards;
+        }
+        
+        @keyframes messageAppear {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        
+        .message-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #ffcc00;
+        }
+        
+        .message-text {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+        
+        @media (max-width: 1100px) {
+            .game-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .left-panel, .right-panel {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .game-board {
+                width: 500px;
+                height: 500px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .game-board {
+                width: 400px;
+                height: 400px;
+            }
+            
+            .stat-value {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                padding: 15px 25px;
+                font-size: 1rem;
+                min-width: 150px;
+            }
+            
+            .instructions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .game-board {
+                width: 350px;
+                height: 350px;
+            }
+            
+            .game-board-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="left-panel">
+            <div class="game-stats">
+                <div class="stats-grid">
+                    <div class="stat">
+                        <div class="stat-value" id="score">0</div>
+                        <div class="stat-label">Очки</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="moves">25</div>
+                        <div class="stat-label">Ходы</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="level">1</div>
+                        <div class="stat-label">Уровень</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="target">1500</div>
+                        <div class="stat-label">Цель</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="boosters-info">
+                <h3><i class="fas fa-rocket"></i> УСИЛИТЕЛИ</h3>
+                
+                <div class="booster-item booster-rocket">
+                    <div class="booster-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div class="booster-text">
+                        <div class="booster-title">Ракета</div>
+                        <div class="booster-desc">Собирай 4 в ряд</div>
+                    </div>
+                    <div class="booster-count" id="rocket-count">0</div>
+                </div>
+                
+                <div class="booster-item booster-bomb">
+                    <div class="booster-icon">
+                        <i class="fas fa-bomb"></i>
+                    </div>
+                    <div class="booster-text">
+                        <div class="booster-title">Бомба</div>
+                        <div class="booster-desc">Собирай 5 в ряд или Т-образно</div>
+                    </div>
+                    <div class="booster-count" id="bomb-count">0</div>
+                </div>
+                
+                <div class="booster-item booster-lightning">
+                    <div class="booster-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="booster-text">
+                        <div class="booster-title">Молния</div>
+                        <div class="booster-desc">Собирай L-образно</div>
+                    </div>
+                    <div class="booster-count" id="lightning-count">0</div>
+                </div>
+                
+                <div class="booster-usage">
+                    <p style="color: #b0b0e0; font-size: 0.9rem; margin-top: 15px; text-align: center;">
+                        <i class="fas fa-info-circle"></i> Кликните на усилитель, чтобы активировать его на поле
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="right-panel">
+            <div class="game-board-container">
+                <div class="game-board" id="gameBoard"></div>
+                <div class="combo-display" id="comboDisplay"></div>
+            </div>
+            
+            <div class="game-controls">
+                <button class="btn btn-primary" id="hintBtn">
+                    <i class="fas fa-lightbulb"></i> Подсказка
+                </button>
+                <button class="btn btn-secondary" id="shuffleBtn">
+                    <i class="fas fa-random"></i> Перемешать
+                </button>
+                <button class="btn btn-booster" id="useBoosterBtn" disabled>
+                    <i class="fas fa-magic"></i> Исп. усилитель
+                </button>
+                <button class="btn btn-primary" id="restartBtn">
+                    <i class="fas fa-redo"></i> Новая игра
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="instructions">
+        <h2><i class="fas fa-graduation-cap"></i> КАК ИГРАТЬ И СОЗДАВАТЬ УСИЛИТЕЛИ</h2>
+        
+        <div class="instructions-grid">
+            <div class="instruction-card">
+                <div class="instruction-icon">4️⃣</div>
+                <h3>4 в ряд = РАКЕТА</h3>
+                <p>Собери 4 кристалла в ряд. Ракета уничтожит всю строку или столбец при активации!</p>
+            </div>
+            
+            <div class="instruction-card">
+                <div class="instruction-icon">5️⃣</div>
+                <h3>5 в ряд = БОМБА</h3>
+                <p>Собери 5 кристаллов в ряд. Бомба взрывает область 3×3 при активации!</p>
+            </div>
+            
+            <div class="instruction-card">
+                <div class="instruction-icon">⎦</div>
+                <h3>L-форма = МОЛНИЯ</h3>
+                <p>Собери L-образную фигуру (3×2). Молния удаляет все кристаллы одного цвета!</p>
+            </div>
+            
+            <div class="instruction-card">
+                <div class="instruction-icon">✚</div>
+                <h3>T-форма = ГИПЕРБОМБА</h3>
+                <p>Собери T-образную фигуру. Гипербомба взрывает область 4×4!</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="game-message" id="gameMessage">
+        <div class="message-title" id="messageTitle">ПОЗДРАВЛЯЕМ!</div>
+        <div class="message-text" id="messageText"></div>
+        <button class="btn btn-primary" id="messageButton">OK</button>
+    </div>
+    
+    <div class="footer">
+        <p>Игра "Кристальный матч" создана для Яндекс.Игр | Спецэффекты и усилители</p>
+        <p>Используйте мышь или касание для игры. Создавайте комбинации для мощных усилителей!</p>
+    </div>
+
+    <script>
+        // УЛУЧШЕННАЯ КОНФИГУРАЦИЯ ИГРЫ
+        const CONFIG = {
+            boardSize: 8,
+            tileTypes: 6, // ВСЕ 6 типов кристаллов работают
+            initialMoves: 25,
+            targetScorePerLevel: 1500,
+            levelUpMultiplier: 1.6,
+            
+            // Очки за различные комбинации
+            scores: {
+                match3: 100,
+                match4: 250,
+                match5: 500,
+                lShape: 400,
+                tShape: 600,
+                comboMultiplier: 1.5
+            },
+            
+            // Типы усилителей
+            boosters: {
+                ROCKET_H: 'rocket-h',    // Горизонтальная ракета
+                ROCKET_V: 'rocket-v',    // Вертикальная ракета
+                BOMB: 'bomb',           // Бомба 3x3
+                HYPER_BOMB: 'hyper-bomb', // Гипербомба 4x4
+                LIGHTNING: 'lightning'   // Молния
+            }
+        };
+
+        // СОСТОЯНИЕ ИГРЫ
+        let gameState = {
+            score: 0,
+            moves: CONFIG.initialMoves,
+            level: 1,
+            target: CONFIG.targetScorePerLevel,
+            selectedTile: null,
+            board: [],
+            isSwapping: false,
+            gameActive: true,
+            comboCount: 0,
+            activeBooster: null,
+            
+            // Счетчики усилителей
+            boosters: {
+                rocket: 0,
+                bomb: 0,
+                lightning: 0,
+                hyperBomb: 0
+            }
+        };
+
+        // ИНИЦИАЛИЗАЦИЯ ИГРЫ
+        function initGame() {
+            createBoard();
+            renderBoard();
+            updateStats();
+            updateBoosters();
+            setupEventListeners();
+            console.log("Игра инициализирована! Доступно типов кристаллов:", CONFIG.tileTypes);
+        }
+
+        // СОЗДАНИЕ ИГРОВОГО ПОЛЯ
+        function createBoard() {
+            gameState.board = [];
+            
+            for (let row = 0; row < CONFIG.boardSize; row++) {
+                gameState.board[row] = [];
+                for (let col = 0; col < CONFIG.boardSize; col++) {
+                    // Простая структура - только тип кристалла
+                    gameState.board[row][col] = getRandomTileType();
+                }
+            }
+            
+            // Убедимся, что нет начальных совпадений
+            while (findMatches().length > 0) {
+                for (let row = 0; row < CONFIG.boardSize; row++) {
+                    for (let col = 0; col < CONFIG.boardSize; col++) {
+                        gameState.board[row][col] = getRandomTileType();
+                    }
+                }
+            }
+            
+            console.log("Игровое поле создано. Пример первых ячеек:", 
+                gameState.board[0][0], gameState.board[0][1], gameState.board[0][2]);
+        }
+
+        // ПОЛУЧЕНИЕ СЛУЧАЙНОГО ТИПА КРИСТАЛЛА (1-6)
+        function getRandomTileType() {
+            return Math.floor(Math.random() * CONFIG.tileTypes) + 1;
+        }
+
+        // ОТРИСОВКА ИГРОВОГО ПОЛЯ
+        function renderBoard() {
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = '';
+            
+            for (let row = 0; row < CONFIG.boardSize; row++) {
+                for (let col = 0; col < CONFIG.boardSize; col++) {
+                    const tileValue = gameState.board[row][col];
+                    
+                    // Определяем, является ли значение усилителем или обычным кристаллом
+                    let tileType = 1;
+                    let boosterType = null;
+                    
+                    if (typeof tileValue === 'string') {
+                        // Это усилитель
+                        boosterType = tileValue;
+                    } else {
+                        // Это обычный кристалл (1-6)
+                        tileType = tileValue;
+                    }
+                    
+                    const tile = document.createElement('div');
+                    
+                    // Определяем класс плитки
+                    let tileClass = `tile tile-${tileType}`;
+                    if (boosterType) {
+                        tileClass += ` tile-${boosterType}`;
+                    }
+                    
+                    tile.className = tileClass;
+                    tile.dataset.row = row;
+                    tile.dataset.col = col;
+                    
+                    const inner = document.createElement('div');
+                    inner.className = 'inner';
+                    
+                    // Добавляем иконку в зависимости от типа плитки
+                    if (boosterType === CONFIG.boosters.ROCKET_H) {
+                        inner.innerHTML = '<i class="fas fa-rocket" style="transform: rotate(90deg);"></i>';
+                    } else if (boosterType === CONFIG.boosters.ROCKET_V) {
+                        inner.innerHTML = '<i class="fas fa-rocket"></i>';
+                    } else if (boosterType === CONFIG.boosters.BOMB) {
+                        inner.innerHTML = '<i class="fas fa-bomb"></i>';
+                    } else if (boosterType === CONFIG.boosters.HYPER_BOMB) {
+                        inner.innerHTML = '<i class="fas fa-atom"></i>';
+                    } else if (boosterType === CONFIG.boosters.LIGHTNING) {
+                        inner.innerHTML = '<i class="fas fa-bolt"></i>';
+                    } else {
+                        // Обычный кристалл
+                        inner.innerHTML = '<i class="fas fa-gem"></i>';
+                    }
+                    
+                    tile.appendChild(inner);
+                    tile.addEventListener('click', () => handleTileClick(row, col));
+                    gameBoard.appendChild(tile);
+                }
+            }
+        }
+
+        // КРАСИВОЕ РАЗРУШЕНИЕ КРИСТАЛЛОВ
+        function destroyCrystalWithEffects(row, col, tileElement) {
+            if (!tileElement) return;
+            
+            // Основная анимация разрушения
+            tileElement.classList.add('tile-destroy');
+            tileElement.classList.add('tile-explode');
+            
+            // Создаем осколки
+            const shardCount = 12;
+            const gameBoard = document.getElementById('gameBoard');
+            const rect = tileElement.getBoundingClientRect();
+            const boardRect = gameBoard.getBoundingClientRect();
+            
+            const centerX = rect.left + rect.width / 2 - boardRect.left;
+            const centerY = rect.top + rect.height / 2 - boardRect.top;
+            
+            // Цвет осколков в зависимости от типа кристалла
+            let shardColor = '#ffffff';
+            if (tileElement.classList.contains('tile-1')) shardColor = '#ff6b6b';
+            else if (tileElement.classList.contains('tile-2')) shardColor = '#4ecdc4';
+            else if (tileElement.classList.contains('tile-3')) shardColor = '#ffe66d';
+            else if (tileElement.classList.contains('tile-4')) shardColor = '#9d65c9';
+            else if (tileElement.classList.contains('tile-5')) shardColor = '#6aecd8';
+            else if (tileElement.classList.contains('tile-6')) shardColor = '#ff9a76';
+            
+            for (let i = 0; i < shardCount; i++) {
+                const shard = document.createElement('div');
+                shard.className = 'tile-shard';
+                shard.style.backgroundColor = shardColor;
+                shard.style.left = `${centerX}px`;
+                shard.style.top = `${centerY}px`;
+                
+                // Случайное направление полета
+                const angle = (i * 360 / shardCount) * (Math.PI / 180);
+                const distance = 50 + Math.random() * 100;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                shard.style.setProperty('--tx', `${tx}px`);
+                shard.style.setProperty('--ty', `${ty}px`);
+                
+                gameBoard.appendChild(shard);
+                
+                // Удаляем осколок после анимации
+                setTimeout(() => shard.remove(), 1000);
+            }
+            
+            // Частицы света
+            const particleCount = 8;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.backgroundColor = shardColor;
+                particle.style.left = `${centerX}px`;
+                particle.style.top = `${centerY}px`;
+                
+                // Случайное направление с меньшей скоростью
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 20 + Math.random() * 60;
+                const px = Math.cos(angle) * distance;
+                const py = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--px', `${px}px`);
+                particle.style.setProperty('--py', `${py}px`);
+                
+                gameBoard.appendChild(particle);
+                
+                // Удаляем частицу после анимации
+                setTimeout(() => particle.remove(), 1500);
+            }
+            
+            // Возвращаем обещание для синхронизации
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    tileElement.style.visibility = 'hidden';
+                    resolve();
+                }, 700);
+            });
+        }
+
+        // ОБНОВЛЕНИЕ СТАТИСТИКИ
+        function updateStats() {
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('moves').textContent = gameState.moves;
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('target').textContent = gameState.target;
+        }
+
+        // ОБНОВЛЕНИЕ СЧЕТЧИКОВ УСИЛИТЕЛЕЙ
+        function updateBoosters() {
+            document.getElementById('rocket-count').textContent = gameState.boosters.rocket;
+            document.getElementById('bomb-count').textContent = gameState.boosters.bomb;
+            document.getElementById('lightning-count').textContent = gameState.boosters.lightning;
+            
+            // Активируем кнопку использования усилителя, если есть доступные
+            const useBoosterBtn = document.getElementById('useBoosterBtn');
+            const hasBoosters = gameState.boosters.rocket > 0 || 
+                              gameState.boosters.bomb > 0 || 
+                              gameState.boosters.lightning > 0;
+            
+            useBoosterBtn.disabled = !hasBoosters;
+        }
+
+        // НАСТРОЙКА ОБРАБОТЧИКОВ СОБЫТИЙ
+        function setupEventListeners() {
+            document.getElementById('hintBtn').addEventListener('click', showHint);
+            document.getElementById('shuffleBtn').addEventListener('click', shuffleBoard);
+            document.getElementById('restartBtn').addEventListener('click', restartGame);
+            document.getElementById('useBoosterBtn').addEventListener('click', activateBoosterMode);
+            document.getElementById('messageButton').addEventListener('click', hideMessage);
+            
+            // Клики на усилители в панели
+            document.querySelectorAll('.booster-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const boosterType = this.classList[1].replace('booster-', '');
+                    selectBooster(boosterType);
+                });
+            });
+        }
+
+        // ОБРАБОТКА КЛИКА ПО ПЛИТКЕ
+        function handleTileClick(row, col) {
+            if (!gameState.gameActive || gameState.isSwapping) return;
+            
+            // Если активен режим усилителя
+            if (gameState.activeBooster && gameState.boosters[gameState.activeBooster] > 0) {
+                useBoosterOnTile(row, col, gameState.activeBooster);
+                return;
+            }
+            
+            // Обычный выбор плитки для обмена
+            handleTileSelection(row, col);
+        }
+
+        // ОБЫЧНЫЙ ВЫБОР ПЛИТКИ
+        function handleTileSelection(row, col) {
+            const tileElement = document.querySelector(`.tile[data-row="${row}"][data-col="${col}"]`);
+            
+            // Если плитка уже выбрана, снимаем выбор
+            if (gameState.selectedTile && 
+                gameState.selectedTile.row === row && 
+                gameState.selectedTile.col === col) {
+                clearSelection();
+                return;
+            }
+            
+            // Если это первая выбранная плитка
+            if (!gameState.selectedTile) {
+                gameState.selectedTile = { row, col };
+                if (tileElement) {
+                    tileElement.classList.add('selected');
+                }
+                return;
+            }
+            
+            // Если выбрана вторая плитка, проверяем соседство
+            const firstTile = gameState.selectedTile;
+            
+            // Проверяем, являются ли плитки соседями
+            const isAdjacent = 
+                (Math.abs(firstTile.row - row) === 1 && firstTile.col === col) ||
+                (Math.abs(firstTile.col - col) === 1 && firstTile.row === row);
+            
+            if (isAdjacent) {
+                // Меняем плитки местами
+                swapTiles(firstTile.row, firstTile.col, row, col);
+                clearSelection();
+            } else {
+                // Выбираем новую плитку
+                const prevSelected = document.querySelector('.tile.selected');
+                if (prevSelected) {
+                    prevSelected.classList.remove('selected');
+                }
+                gameState.selectedTile = { row, col };
+                if (tileElement) {
+                    tileElement.classList.add('selected');
+                }
+            }
+        }
+
+        // ВЫБОР УСИЛИТЕЛЯ
+        function selectBooster(type) {
+            if (gameState.boosters[type] > 0) {
+                gameState.activeBooster = type;
+                showMessage(`Выбран усилитель: ${getBoosterName(type)}`, 'Выберите кристалл на поле для активации');
+                document.getElementById('useBoosterBtn').innerHTML = `<i class="fas fa-magic"></i> ${getBoosterName(type)}`;
+            } else {
+                showMessage('Нет усилителей', `У вас нет усилителей типа "${getBoosterName(type)}"`);
+            }
+        }
+
+        // ПОЛУЧЕНИЕ ИМЕНИ УСИЛИТЕЛЯ
+        function getBoosterName(type) {
+            const names = {
+                rocket: 'Ракета',
+                bomb: 'Бомба',
+                lightning: 'Молния',
+                hyperBomb: 'Гипербомба'
+            };
+            return names[type] || type;
+        }
+
+        // АКТИВАЦИЯ РЕЖИМА ИСПОЛЬЗОВАНИЯ УСИЛИТЕЛЯ
+        function activateBoosterMode() {
+            if (!gameState.activeBooster && (gameState.boosters.rocket > 0 || gameState.boosters.bomb > 0 || gameState.boosters.lightning > 0)) {
+                showMessage('Выберите усилитель', 'Кликните на усилитель в левой панели, затем на кристалл на поле');
+            } else if (gameState.activeBooster) {
+                showMessage('Режим усилителя активен', `Кликните на кристалл для активации ${getBoosterName(gameState.activeBooster)}`);
+            }
+        }
+
+        // ИСПОЛЬЗОВАНИЕ УСИЛИТЕЛЯ НА ПЛИТКЕ
+        function useBoosterOnTile(row, col, boosterType) {
+            if (gameState.boosters[boosterType] <= 0) {
+                showMessage('Нет усилителей', `У вас нет усилителей типа "${getBoosterName(boosterType)}"`);
+                return;
+            }
+            
+            // Используем усилитель
+            gameState.boosters[boosterType]--;
+            updateBoosters();
+            
+            // Применяем эффект усилителя
+            applyBoosterEffect(row, col, boosterType);
+            
+            // Сбрасываем активный усилитель
+            gameState.activeBooster = null;
+            document.getElementById('useBoosterBtn').innerHTML = '<i class="fas fa-magic"></i> Исп. усилитель';
+            
+            // Уменьшаем ходы
+            gameState.moves--;
+            updateStats();
+            
+            // Проверяем совпадения после применения усилителя
+            setTimeout(() => {
+                const matches = findMatches();
+                if (matches.length > 0) {
+                    processMatches(matches);
+                } else {
+                    gameState.isSwapping = false;
+                    checkGameOver();
+                }
+            }, 500);
+        }
+
+        // ПРИМЕНЕНИЕ ЭФФЕКТА УСИЛИТЕЛЯ
+        function applyBoosterEffect(row, col, boosterType) {
+            const tilesToRemove = [];
+            
+            switch(boosterType) {
+                case 'rocket':
+                    // Ракета уничтожает всю строку и столбец
+                    for (let i = 0; i < CONFIG.boardSize; i++) {
+                        // Горизонтальная линия
+                        if (i !== col) tilesToRemove.push({row: row, col: i});
+                        // Вертикальная линия
+                        if (i !== row) tilesToRemove.push({row: i, col: col});
+                    }
+                    createRocketEffect(row, col);
+                    break;
+                    
+                case 'bomb':
+                    // Бомба уничтожает область 3x3
+                    for (let r = Math.max(0, row-1); r <= Math.min(CONFIG.boardSize-1, row+1); r++) {
+                        for (let c = Math.max(0, col-1); c <= Math.min(CONFIG.boardSize-1, col+1); c++) {
+                            tilesToRemove.push({row: r, col: c});
+                        }
+                    }
+                    createBombEffect(row, col);
+                    break;
+                    
+                case 'hyperBomb':
+                    // Гипербомба уничтожает область 4x4
+                    for (let r = Math.max(0, row-2); r <= Math.min(CONFIG.boardSize-1, row+1); r++) {
+                        for (let c = Math.max(0, col-2); c <= Math.min(CONFIG.boardSize-1, col+1); c++) {
+                            tilesToRemove.push({row: r, col: c});
+                        }
+                    }
+                    createHyperBombEffect(row, col);
+                    break;
+                    
+                case 'lightning':
+                    // Молния уничтожает все кристаллы того же типа
+                    const targetValue = gameState.board[row][col];
+                    let targetType = targetValue;
+                    
+                    // Если это усилитель, ищем его базовый тип
+                    if (typeof targetValue === 'string') {
+                        // Для усилителя используем случайный тип
+                        targetType = getRandomTileType();
+                    }
+                    
+                    for (let r = 0; r < CONFIG.boardSize; r++) {
+                        for (let c = 0; c < CONFIG.boardSize; c++) {
+                            const cellValue = gameState.board[r][c];
+                            if (typeof cellValue === 'number' && cellValue === targetType) {
+                                tilesToRemove.push({row: r, col: c});
+                            }
+                        }
+                    }
+                    createLightningEffect(row, col);
+                    break;
+            }
+            
+            // Удаляем плитки с эффектами
+            removeTilesWithEffects(tilesToRemove, true);
+            
+            // Добавляем очки за использование усилителя
+            addScore(200);
+        }
+
+        // СОЗДАНИЕ ЭФФЕКТА РАКЕТЫ
+        function createRocketEffect(row, col) {
+            const gameBoard = document.getElementById('gameBoard');
+            
+            // Горизонтальный эффект
+            const horizontalEffect = document.createElement('div');
+            horizontalEffect.className = 'special-effect rocket-effect';
+            horizontalEffect.style.top = `${row * 70 + 35}px`;
+            horizontalEffect.style.left = '0';
+            horizontalEffect.style.width = '100%';
+            gameBoard.appendChild(horizontalEffect);
+            
+            // Вертикальный эффект
+            const verticalEffect = document.createElement('div');
+            verticalEffect.className = 'special-effect rocket-effect';
+            verticalEffect.style.top = '0';
+            verticalEffect.style.left = `${col * 70 + 35}px`;
+            verticalEffect.style.width = '10px';
+            verticalEffect.style.height = '100%';
+            verticalEffect.style.transform = 'rotate(90deg)';
+            gameBoard.appendChild(verticalEffect);
+            
+            setTimeout(() => {
+                horizontalEffect.remove();
+                verticalEffect.remove();
+            }, 800);
+        }
+
+        // СОЗДАНИЕ ЭФФЕКТА БОМБЫ
+        function createBombEffect(row, col) {
+            const gameBoard = document.getElementById('gameBoard');
+            const bombEffect = document.createElement('div');
+            bombEffect.className = 'special-effect bomb-effect';
+            bombEffect.style.top = `${row * 70 + 35}px`;
+            bombEffect.style.left = `${col * 70 + 35}px`;
+            bombEffect.style.transform = 'translate(-50%, -50%)';
+            gameBoard.appendChild(bombEffect);
+            
+            setTimeout(() => {
+                bombEffect.remove();
+            }, 600);
+        }
+
+        // СОЗДАНИЕ ЭФФЕКТА ГИПЕРБОМБЫ
+        function createHyperBombEffect(row, col) {
+            const gameBoard = document.getElementById('gameBoard');
+            const hyperBombEffect = document.createElement('div');
+            hyperBombEffect.className = 'special-effect hyper-bomb-effect';
+            hyperBombEffect.style.top = `${row * 70 + 35}px`;
+            hyperBombEffect.style.left = `${col * 70 + 35}px`;
+            hyperBombEffect.style.transform = 'translate(-50%, -50%)';
+            gameBoard.appendChild(hyperBombEffect);
+            
+            setTimeout(() => {
+                hyperBombEffect.remove();
+            }, 800);
+        }
+
+        // СОЗДАНИЕ ЭФФЕКТА МОЛНИИ
+        function createLightningEffect(row, col) {
+            const gameBoard = document.getElementById('gameBoard');
+            
+            // Создаем несколько молний для эффекта
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const lightning = document.createElement('div');
+                    lightning.className = 'special-effect';
+                    lightning.innerHTML = '<i class="fas fa-bolt" style="color: #ffd200; font-size: 32px; text-shadow: 0 0 10px #ffd200;"></i>';
+                    lightning.style.top = `${Math.random() * 560}px`;
+                    lightning.style.left = `${Math.random() * 560}px`;
+                    lightning.style.animation = 'fallDown 0.3s forwards';
+                    gameBoard.appendChild(lightning);
+                    
+                    setTimeout(() => lightning.remove(), 300);
+                }, i * 100);
+            }
+        }
+
+        // ОЧИСТКА ВЫБОРА ПЛИТКИ
+        function clearSelection() {
+            const selectedTile = document.querySelector('.tile.selected');
+            if (selectedTile) {
+                selectedTile.classList.remove('selected');
+            }
+            gameState.selectedTile = null;
+        }
+
+        // ОБМЕН ПЛИТКАМИ
+        function swapTiles(row1, col1, row2, col2) {
+            gameState.isSwapping = true;
+            
+            // Визуальная анимация обмена
+            const tile1 = document.querySelector(`.tile[data-row="${row1}"][data-col="${col1}"]`);
+            const tile2 = document.querySelector(`.tile[data-row="${row2}"][data-col="${col2}"]`);
+            
+            if (tile1 && tile2) {
+                tile1.style.transform = 'scale(0.9)';
+                tile2.style.transform = 'scale(0.9)';
+            }
+            
+            // Меняем местами в массиве
+            const temp = gameState.board[row1][col1];
+            gameState.board[row1][col1] = gameState.board[row2][col2];
+            gameState.board[row2][col2] = temp;
+            
+            setTimeout(() => {
+                renderBoard();
+                
+                // Проверяем совпадения
+                const matches = findMatches();
+                
+                if (matches.length > 0) {
+                    // Есть совпадения - обрабатываем их
+                    processMatches(matches);
+                } else {
+                    // Нет совпадений - возвращаем плитки обратно
+                    setTimeout(() => {
+                        const temp = gameState.board[row1][col1];
+                        gameState.board[row1][col1] = gameState.board[row2][col2];
+                        gameState.board[row2][col2] = temp;
+                        
+                        renderBoard();
+                        gameState.isSwapping = false;
+                        gameState.moves--;
+                        updateStats();
+                        checkGameOver();
+                    }, 500);
+                }
+            }, 300);
+        }
+
+        // УДАЛЕНИЕ ПЛИТОК С ЭФФЕКТАМИ
+        async function removeTilesWithEffects(tilesToRemove, instant = false) {
+            const promises = [];
+            const uniqueTiles = [];
+            
+            // Убираем дубликаты
+            for (const tile of tilesToRemove) {
+                if (!uniqueTiles.some(t => t.row === tile.row && t.col === tile.col)) {
+                    uniqueTiles.push(tile);
+                }
+            }
+            
+            for (const tile of uniqueTiles) {
+                const tileElement = document.querySelector(
+                    `.tile[data-row="${tile.row}"][data-col="${tile.col}"]`
+                );
+                
+                if (tileElement) {
+                    if (instant) {
+                        tileElement.style.opacity = '0';
+                        tileElement.style.transform = 'scale(0)';
+                    } else {
+                        promises.push(destroyCrystalWithEffects(tile.row, tile.col, tileElement));
+                    }
+                }
+            }
+            
+            // Ждем завершения всех анимаций
+            await Promise.all(promises);
+            
+            // Обновляем игровое поле
+            for (const tile of uniqueTiles) {
+                gameState.board[tile.row][tile.col] = getRandomTileType();
+            }
+            
+            renderBoard();
+            
+            // Анимация падения новых плиток
+            setTimeout(() => {
+                dropTilesWithEffects();
+            }, instant ? 100 : 500);
+        }
+
+        // ПАДЕНИЕ ПЛИТОК С ЭФФЕКТАМИ
+        function dropTilesWithEffects() {
+            let moved = false;
+            
+            for (let col = 0; col < CONFIG.boardSize; col++) {
+                let emptySpaces = 0;
+                
+                // Проверяем столбец снизу вверх
+                for (let row = CONFIG.boardSize - 1; row >= 0; row--) {
+                    if (!gameState.board[row][col]) {
+                        emptySpaces++;
+                    } else if (emptySpaces > 0) {
+                        // Перемещаем плитку вниз
+                        gameState.board[row + emptySpaces][col] = gameState.board[row][col];
+                        gameState.board[row][col] = null;
+                        moved = true;
+                    }
+                }
+                
+                // Заполняем пустые места новыми плитками
+                for (let row = 0; row < emptySpaces; row++) {
+                    gameState.board[row][col] = getRandomTileType();
+                }
+            }
+            
+            if (moved) {
+                renderBoard();
+                
+                // Анимация появления новых плиток
+                setTimeout(() => {
+                    const tiles = document.querySelectorAll('.tile');
+                    tiles.forEach(tile => {
+                        tile.classList.add('tile-appear');
+                    });
+                    
+                    // Проверяем новые совпадения после падения
+                    setTimeout(() => {
+                        const newMatches = findMatches();
+                        
+                        if (newMatches.length > 0) {
+                            processMatches(newMatches);
+                        } else {
+                            endTurn();
+                        }
+                    }, 500);
+                }, 100);
+            } else {
+                endTurn();
+            }
+        }
+
+        // ПОИСК СОВПАДЕНИЙ - ИСПРАВЛЕННАЯ ВЕРСИЯ
+        function findMatches() {
+            const matches = [];
+            const checked = Array(CONFIG.boardSize).fill().map(() => Array(CONFIG.boardSize).fill(false));
+            
+            // Проверка по горизонтали
+            for (let row = 0; row < CONFIG.boardSize; row++) {
+                for (let col = 0; col < CONFIG.boardSize - 2; col++) {
+                    const tile1 = gameState.board[row][col];
+                    const tile2 = gameState.board[row][col + 1];
+                    const tile3 = gameState.board[row][col + 2];
+                    
+                    // Проверяем, что все три ячейки содержат числа (не усилители) и равны
+                    if (typeof tile1 === 'number' && typeof tile2 === 'number' && typeof tile3 === 'number' &&
+                        tile1 === tile2 && tile2 === tile3) {
+                        
+                        let matchLength = 3;
+                        while (col + matchLength < CONFIG.boardSize && 
+                               typeof gameState.board[row][col + matchLength] === 'number' &&
+                               gameState.board[row][col + matchLength] === tile1) {
+                            matchLength++;
+                        }
+                        
+                        // Собираем уникальные плитки для совпадения
+                        const matchTiles = [];
+                        for (let i = 0; i < matchLength; i++) {
+                            if (!checked[row][col + i]) {
+                                matchTiles.push({row: row, col: col + i});
+                                checked[row][col + i] = true;
+                            }
+                        }
+                        
+                        if (matchTiles.length > 0) {
+                            matches.push({
+                                tiles: matchTiles,
+                                length: matchLength,
+                                horizontal: true,
+                                tileType: tile1
+                            });
+                        }
+                        
+                        col += matchLength - 1;
+                    }
+                }
+            }
+            
+            // Проверка по вертикали
+            for (let col = 0; col < CONFIG.boardSize; col++) {
+                for (let row = 0; row < CONFIG.boardSize - 2; row++) {
+                    const tile1 = gameState.board[row][col];
+                    const tile2 = gameState.board[row + 1][col];
+                    const tile3 = gameState.board[row + 2][col];
+                    
+                    if (typeof tile1 === 'number' && typeof tile2 === 'number' && typeof tile3 === 'number' &&
+                        tile1 === tile2 && tile2 === tile3) {
+                        
+                        let matchLength = 3;
+                        while (row + matchLength < CONFIG.boardSize && 
+                               typeof gameState.board[row + matchLength][col] === 'number' &&
+                               gameState.board[row + matchLength][col] === tile1) {
+                            matchLength++;
+                        }
+                        
+                        const matchTiles = [];
+                        for (let i = 0; i < matchLength; i++) {
+                            if (!checked[row + i][col]) {
+                                matchTiles.push({row: row + i, col: col});
+                                checked[row + i][col] = true;
+                            }
+                        }
+                        
+                        if (matchTiles.length > 0) {
+                            matches.push({
+                                tiles: matchTiles,
+                                length: matchLength,
+                                horizontal: false,
+                                tileType: tile1
+                            });
+                        }
+                        
+                        row += matchLength - 1;
+                    }
+                }
+            }
+            
+            return matches;
+        }
+
+        // ОБРАБОТКА СОВПАДЕНИЙ
+        async function processMatches(matches) {
+            if (matches.length === 0) {
+                endTurn();
+                return;
+            }
+            
+            let totalScore = 0;
+            const tilesToRemove = [];
+            let createdBoosters = [];
+            
+            for (const match of matches) {
+                // Добавляем очки за совпадение
+                let matchScore = 0;
+                if (match.length === 4) {
+                    matchScore = CONFIG.scores.match4 * (gameState.comboCount + 1);
+                    // Создаем ракету за 4 в ряд
+                    const centerTile = match.tiles[Math.floor(match.tiles.length / 2)];
+                    const boosterType = match.horizontal ? CONFIG.boosters.ROCKET_H : CONFIG.boosters.ROCKET_V;
+                    createdBoosters.push({
+                        row: centerTile.row,
+                        col: centerTile.col,
+                        type: boosterType
+                    });
+                    gameState.boosters.rocket++;
+                } else if (match.length >= 5) {
+                    matchScore = CONFIG.scores.match5 * (gameState.comboCount + 1);
+                    // Создаем бомбу за 5+ в ряд
+                    const centerTile = match.tiles[Math.floor(match.tiles.length / 2)];
+                    createdBoosters.push({
+                        row: centerTile.row,
+                        col: centerTile.col,
+                        type: CONFIG.boosters.BOMB
+                    });
+                    gameState.boosters.bomb++;
+                } else {
+                    matchScore = CONFIG.scores.match3 * (gameState.comboCount + 1);
+                }
+                
+                totalScore += matchScore;
+                
+                // Собираем плитки для удаления
+                for (const tile of match.tiles) {
+                    if (!tilesToRemove.some(t => t.row === tile.row && t.col === tile.col)) {
+                        tilesToRemove.push(tile);
+                    }
+                }
+            }
+            
+            // Добавляем очки
+            addScore(totalScore);
+            gameState.comboCount++;
+            
+            // Показываем комбо
+            if (gameState.comboCount > 1) {
+                showCombo(`x${gameState.comboCount} КОМБО! +${totalScore}`);
+            }
+            
+            // Создаем усилители
+            for (const booster of createdBoosters) {
+                gameState.board[booster.row][booster.col] = booster.type;
+            }
+            
+            // Удаляем плитки с эффектами
+            await removeTilesWithEffects(tilesToRemove);
+            
+            // Обновляем статистику
+            updateStats();
+            updateBoosters();
+            
+            // Проверяем уровень (без обновления поля)
+            if (gameState.score >= gameState.target) {
+                levelUp();
+            }
+        }
+
+        // ДОБАВЛЕНИЕ ОЧКОВ
+        function addScore(points) {
+            gameState.score += points;
+            
+            // Показываем анимацию добавления очков
+            const scoreElement = document.getElementById('score');
+            scoreElement.style.transform = 'scale(1.2)';
+            scoreElement.style.color = '#ffcc00';
+            
+            setTimeout(() => {
+                scoreElement.style.transform = 'scale(1)';
+                scoreElement.style.color = '#6ee7b7';
+            }, 300);
+        }
+
+        // ОКОНЧАНИЕ ХОДА
+        function endTurn() {
+            gameState.comboCount = 0;
+            gameState.isSwapping = false;
+            
+            checkGameOver();
+        }
+
+        // ПРОВЕРКА ОКОНЧАНИЯ ИГРЫ
+        function checkGameOver() {
+            if (gameState.moves <= 0) {
+                setTimeout(() => {
+                    endGame(false);
+                }, 500);
+            }
+        }
+
+        // ПОКАЗ КОМБО
+        function showCombo(text) {
+            const comboDisplay = document.getElementById('comboDisplay');
+            comboDisplay.textContent = text;
+            comboDisplay.classList.remove('active');
+            
+            setTimeout(() => {
+                comboDisplay.classList.add('active');
+            }, 10);
+            
+            setTimeout(() => {
+                comboDisplay.classList.remove('active');
+            }, 1200);
+        }
+
+        // ПОВЫШЕНИЕ УРОВНЯ
+        function levelUp() {
+            gameState.level++;
+            gameState.target = Math.floor(CONFIG.targetScorePerLevel * Math.pow(CONFIG.levelUpMultiplier, gameState.level - 1));
+            gameState.moves += 15; // Бонус ходов за новый уровень
+            
+            showMessage(`УРОВЕНЬ ${gameState.level}!`, `+15 бонусных ходов!\nЦель: ${gameState.target} очков`);
+            showCombo(`Уровень ${gameState.level}!`);
+            updateStats();
+        }
+
+        // ПОКАЗАТЬ ПОДСКАЗКУ
+        function showHint() {
+            const possibleMove = findPossibleMove();
+            
+            if (possibleMove) {
+                const { row1, col1, row2, col2 } = possibleMove;
+                
+                const tile1 = document.querySelector(`.tile[data-row="${row1}"][data-col="${col1}"]`);
+                const tile2 = document.querySelector(`.tile[data-row="${row2}"][data-col="${col2}"]`);
+                
+                if (tile1 && tile2) {
+                    tile1.style.boxShadow = '0 0 30px #00ff00, inset 0 0 20px #00ff00';
+                    tile2.style.boxShadow = '0 0 30px #00ff00, inset 0 0 20px #00ff00';
+                    
+                    setTimeout(() => {
+                        tile1.style.boxShadow = '';
+                        tile2.style.boxShadow = '';
+                    }, 2000);
+                }
+            } else {
+                showMessage('Подсказка', 'Возможных ходов не найдено. Попробуйте перемешать поле.');
+            }
+        }
+
+        // ПОИСК ВОЗМОЖНОГО ХОДА
+        function findPossibleMove() {
+            // Простая реализация поиска возможного хода
+            for (let row = 0; row < CONFIG.boardSize; row++) {
+                for (let col = 0; col < CONFIG.boardSize - 1; col++) {
+                    // Проверяем горизонтальный обмен
+                    const temp = gameState.board[row][col];
+                    gameState.board[row][col] = gameState.board[row][col + 1];
+                    gameState.board[row][col + 1] = temp;
+                    
+                    const matches = findMatches();
+                    
+                    // Возвращаем на место
+                    gameState.board[row][col + 1] = gameState.board[row][col];
+                    gameState.board[row][col] = temp;
+                    
+                    if (matches.length > 0) {
+                        return { row1: row, col1: col, row2: row, col2: col + 1 };
+                    }
+                }
+            }
+            
+            for (let col = 0; col < CONFIG.boardSize; col++) {
+                for (let row = 0; row < CONFIG.boardSize - 1; row++) {
+                    // Проверяем вертикальный обмен
+                    const temp = gameState.board[row][col];
+                    gameState.board[row][col] = gameState.board[row + 1][col];
+                    gameState.board[row + 1][col] = temp;
+                    
+                    const matches = findMatches();
+                    
+                    // Возвращаем на место
+                    gameState.board[row + 1][col] = gameState.board[row][col];
+                    gameState.board[row][col] = temp;
+                    
+                    if (matches.length > 0) {
+                        return { row1: row, col1: col, row2: row + 1, col2: col };
+                    }
+                }
+            }
+            
+            return null;
+        }
+
+        // ПЕРЕМЕШАТЬ ПОЛЕ
+        function shuffleBoard() {
+            if (!gameState.gameActive || gameState.isSwapping) return;
+            
+            if (gameState.moves > 0) {
+                gameState.moves = Math.max(0, gameState.moves - 3); // Штраф за перемешивание
+                
+                // Сохраняем усилители
+                const boosters = [];
+                for (let row = 0; row < CONFIG.boardSize; row++) {
+                    for (let col = 0; col < CONFIG.boardSize; col++) {
+                        if (typeof gameState.board[row][col] === 'string') {
+                            boosters.push({
+                                row: row,
+                                col: col,
+                                type: gameState.board[row][col]
+                            });
+                        }
+                    }
+                }
+                
+                // Создаем новое поле без совпадений
+                do {
+                    for (let row = 0; row < CONFIG.boardSize; row++) {
+                        for (let col = 0; col < CONFIG.boardSize; col++) {
+                            gameState.board[row][col] = getRandomTileType();
+                        }
+                    }
+                    
+                    // Восстанавливаем усилители
+                    for (const booster of boosters) {
+                        gameState.board[booster.row][booster.col] = booster.type;
+                    }
+                } while (findMatches().length > 0);
+                
+                renderBoard();
+                updateStats();
+                
+                if (gameState.moves <= 0) {
+                    setTimeout(() => {
+                        endGame(false);
+                    }, 500);
+                }
+            } else {
+                showMessage('Нет ходов', 'У вас не осталось ходов для перемешивания!');
+            }
+        }
+
+        // ПЕРЕЗАПУСК ИГРЫ
+        function restartGame() {
+            if (confirm("Начать новую игру? Текущий прогресс будет потерян.")) {
+                gameState = {
+                    score: 0,
+                    moves: CONFIG.initialMoves,
+                    level: 1,
+                    target: CONFIG.targetScorePerLevel,
+                    selectedTile: null,
+                    board: [],
+                    isSwapping: false,
+                    gameActive: true,
+                    comboCount: 0,
+                    activeBooster: null,
+                    boosters: {
+                        rocket: 0,
+                        bomb: 0,
+                        lightning: 0,
+                        hyperBomb: 0
+                    }
+                };
+                
+                createBoard();
+                renderBoard();
+                updateStats();
+                updateBoosters();
+                clearSelection();
+            }
+        }
+
+        // ЗАВЕРШЕНИЕ ИГРЫ
+        function endGame(success) {
+            gameState.gameActive = false;
+            
+            setTimeout(() => {
+                const message = success ? 
+                    `Поздравляем! Вы достигли цели уровня ${gameState.level}!` :
+                    `Игра окончена!`;
+                
+                const details = `Ваш счет: ${gameState.score}\nУровень: ${gameState.level}\nУсилители: ${gameState.boosters.rocket + gameState.boosters.bomb + gameState.boosters.lightning}`;
+                
+                showMessage(message, details);
+            }, 500);
+        }
+
+        // ПОКАЗАТЬ СООБЩЕНИЕ
+        function showMessage(title, text) {
+            const messageElement = document.getElementById('gameMessage');
+            const titleElement = document.getElementById('messageTitle');
+            const textElement = document.getElementById('messageText');
+            
+            titleElement.textContent = title;
+            textElement.innerHTML = text.replace(/\n/g, '<br>');
+            messageElement.classList.add('active');
+        }
+
+        // СКРЫТЬ СООБЩЕНИЕ
+        function hideMessage() {
+            document.getElementById('gameMessage').classList.remove('active');
+        }
+
+        // ЗАПУСК ИГРЫ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
